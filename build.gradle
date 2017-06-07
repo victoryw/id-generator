@@ -5,10 +5,16 @@
  * For more details take a look at the Java Libraries chapter in the Gradle
  * user guide available at https://docs.gradle.org/3.5/userguide/java_library_plugin.html
  */
-
+group = 'org.victoryw.idGenerator'
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'idea'
+apply plugin: 'jacoco'
+apply plugin: 'checkstyle'
 
+task wrapper(type: Wrapper) {
+    gradleVersion = '3.5'
+}
 // In this section you declare where to find the dependencies of your project
 repositories {
     // Use jcenter for resolving your dependencies.
@@ -16,14 +22,38 @@ repositories {
     jcenter()
 }
 
+checkstyle {
+    configFile = rootProject.file('checkstyle.xml')
+    toolVersion ="7.8.1"
+    checkstyleTest {}.enabled = false
+}
+
+jacoco {
+    // change the version of Jacoco in use
+    toolVersion = '0.7.9'
+}
+
+jacoco {
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+test {
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}
+
+
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
-    implementation 'com.google.guava:guava:21.0'
-
-    // Use JUnit test framework
     testImplementation 'junit:junit:4.12'
 }
 
