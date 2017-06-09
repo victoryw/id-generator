@@ -8,6 +8,7 @@
 .idea/**/workspace.xml
 .idea/**/tasks.xml
 .idea/dictionaries
+.idea/vcs.xml
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/
@@ -204,3 +205,4 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 # End of https://www.gitignore.io/api/java,macos,gradle,intellij,jetbrains,intellij+iml
+local.properties

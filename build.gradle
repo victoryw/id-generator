@@ -6,11 +6,25 @@
  * user guide available at https://docs.gradle.org/3.5/userguide/java_library_plugin.html
  */
 group = 'org.victoryw.idGenerator'
+version = '1.0'
 // Apply the java-library plugin to add support for Java Library
 apply plugin: 'java-library'
+apply plugin: 'java'
 apply plugin: 'idea'
 apply plugin: 'jacoco'
 apply plugin: 'checkstyle'
+apply plugin: "com.jfrog.bintray"
+apply plugin: "maven-publish"
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.jfrog.bintray.gradle:gradle-bintray-plugin:1.7.3'
+    }
+}
+apply plugin: 'com.jfrog.bintray'
 
 task wrapper(type: Wrapper) {
     gradleVersion = '3.5'
@@ -56,4 +70,46 @@ jacocoTestReport {
 dependencies {
     testImplementation 'junit:junit:4.12'
 }
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    filesSpec {
+        from 'build/libs'
+        into '.'
+    }
+
+    pkg {
+        repo = 'mvn'
+        name = 'id-generator'
+        userOrg = ''
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/victoryw/id-generator'
+
+        version {
+            name = '1.0-Final'
+        }
+    }
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier "sources"
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+            groupId 'org.victoryw.idGenerator'
+            artifactId 'id-generator'
+            version '1.0'
+        }
+    }
+}
+
 
