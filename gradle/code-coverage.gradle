@@ -1,0 +1,25 @@
+apply plugin: 'jacoco'
+
+jacoco {
+    // change the version of Jacoco in use
+    toolVersion = '0.7.9'
+}
+
+jacoco {
+    reportsDir = file("$buildDir/customJacocoReportDir")
+}
+
+test {
+    jacoco {
+        destinationFile = file("$buildDir/jacoco/jacocoTest.exec")
+        classDumpDir = file("$buildDir/jacoco/classpathdumps")
+    }
+}
+
+jacocoTestReport {
+    reports {
+        xml.enabled false
+        csv.enabled false
+        html.destination "${buildDir}/jacocoHtml"
+    }
+}

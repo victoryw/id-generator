@@ -1,0 +1,76 @@
+apply plugin: "com.jfrog.bintray"
+apply plugin: "maven-publish"
+
+Properties properties = new Properties()
+properties.load(project.rootProject.file('config/local.properties').newDataInputStream())
+bintray {
+    user = properties.getProperty("bintray.user")
+    key = properties.getProperty("bintray.apikey")
+
+    publications = ['MyPublication']
+
+    pkg {
+        repo = 'public'
+        name = 'id-generator'
+
+        licenses = ['MIT']
+        vcsUrl = 'https://github.com/victoryw/id-generator'
+
+    }
+}
+
+task sourcesJar(type: Jar) {
+    from sourceSets.main.allJava
+    classifier "sources"
+}
+
+
+task javadocJar(type: Jar, dependsOn: javadoc) {
+    classifier = 'javadoc'
+    from javadoc.destinationDir
+}
+
+artifacts {
+    archives sourcesJar, javadocJar
+}
+
+
+def pomConfig = {
+    licenses {
+        license {
+            name "The Apache Software License, Version 2.0"
+            url "http://www.apache.org/licenses/LICENSE-2.0.txt"
+            distribution "repo"
+        }
+    }
+    developers {
+        developer {
+            id "developer-id"
+            name "developer-name"
+            email "dev@d.com"
+        }
+    }
+
+    scm {
+        url "https://github.com/yourgithubaccount/example"
+    }
+}
+
+publishing {
+    publications {
+        MyPublication(MavenPublication) {
+            from components.java
+
+            artifact sourcesJar
+            artifact javadocJar
+
+            pom.withXml {
+                def root = asNode()
+                root.appendNode('description', 'Your description of the lib')
+                root.appendNode('name', 'Your name of the lib')
+                root.appendNode('url', 'https://site_for_lib.tld')
+                root.children().last() + pomConfig
+            }
+        }
+    }
+}

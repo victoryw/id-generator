@@ -1,0 +1,8 @@
+apply plugin: 'checkstyle'
+
+
+checkstyle {
+    configFile = rootProject.file('config/checkstyle.xml')
+    toolVersion ="7.8.1"
+    checkstyleTest {}.enabled = false
+}
